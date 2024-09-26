@@ -1,0 +1,33 @@
+---
+title: "p8105_hw2_hy2912"
+author: "Helen Yousaf"
+date: "2024-09-26"
+output: html_document
+---
+
+```{r setup}
+library(tidyverse)
+```
+
+## Problem 1 
+#### Importing NYC Transit Data 
+
+```{r, include = FALSE}
+getwd()
+```
+
+```{r}
+NYCTransit_df = read_csv(file = "/Users/helenyousaf/Desktop/p8105_hw2_hy2912/NYC_Transit_Subway_Entrance_And_Exit_Data.csv")
+```
+```{r}
+names(NYCTransit_df)
+```
+```{r}
+NYCTransit_df = janitor::clean_names(NYCTransit_df)
+names(NYCTransit_df)
+```
+#### Looking at data
+```{r}
+print(NYCTransit_df)
+```
+
