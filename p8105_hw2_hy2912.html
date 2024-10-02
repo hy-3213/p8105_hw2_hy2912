@@ -575,6 +575,16 @@ select(-contains(&quot;notes&quot;)) </code></pre>
 <h4>Combine datasets</h4>
 <pre class="r"><code>combined_data &lt;- bind_rows(MrTrash_df, professor_trash_wheel, gwynnda_df)</code></pre>
 </div>
+<div id="data-set-description-1" class="section level4">
+<h4>Data set description</h4>
+<p>This data set includes information for Mr. Trash Wheel “a water-wheel
+vessel which removes trash from the Inner Harbor in Baltimore, Maryland.
+The data sheet includes several sheets, but for the purpose of this
+assignment, only the Mr. Trash Wheel, Professor Trash Wheel, and Gwynnda
+are utilized. The data was clean by using the janitorr:: clean_names()
+function to change the column names to lower snake case. In addition,
+the sports balls data was changed to an integer format.</p>
+</div>
 </div>
 <div id="problem-3-the-great-british-baking-show" class="section level2">
 <h2>Problem 3: The Great British Baking Show</h2>
@@ -653,7 +663,22 @@ anti_results_viewers&lt;- anti_join(results_df, viewers_df, by = &quot;episode&q
 </div>
 <div id="merge-datasets" class="section level4">
 <h4>Merge datasets</h4>
-<pre class="r"><code>final_dataset &lt;- anti_join(bakes_df, bakers_df, results_df, by = &quot;baker&quot;)</code></pre>
+<pre class="r"><code>final_dataset &lt;- anti_join(bakes_df, bakers_df, results_df, by = &quot;baker&quot;)
+print(final_dataset)</code></pre>
+<pre><code>## # A tibble: 548 × 5
+##    series episode baker     signature_bake                          show_stopper
+##     &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;                                   &lt;chr&gt;       
+##  1      1       1 Annetha   &quot;Light Jamaican Black Cakewith Strawbe… Red, White …
+##  2      1       1 David     &quot;Chocolate Orange Cake&quot;                 Black Fores…
+##  3      1       1 Edd       &quot;Caramel Cinnamon and Banana Cake&quot;      N/A         
+##  4      1       1 Jasminder &quot;Fresh Mango and Passion Fruit Humming… N/A         
+##  5      1       1 Jonathan  &quot;Carrot Cake with Lime and Cream Chees… Three Tiere…
+##  6      1       1 Lea       &quot;Cranberry and Pistachio Cakewith Oran… Raspberries…
+##  7      1       1 Louise    &quot;Carrot and Orange Cake&quot;                Never Fail …
+##  8      1       1 Mark      &quot;Sticky Marmalade Tea Loaf&quot;             Heart-shape…
+##  9      1       1 Miranda   &quot;Triple Layered Brownie Meringue Cake\… Three Tiere…
+## 10      1       1 Ruth      &quot;Three Tiered Lemon Drizzle Cakewith F… Classic Cho…
+## # ℹ 538 more rows</code></pre>
 </div>
 <div id="exporting-final-dataset" class="section level4">
 <h4>Exporting final dataset</h4>
@@ -691,7 +716,14 @@ janitor::clean_names()</code></pre>
 <pre class="r"><code>avg_viewership_season_1 &lt;- viewers_df %&gt;%
   summarise(avg_viewership = mean(series_1, na.rm = TRUE))</code></pre>
 <pre class="r"><code>avg_viewership_season_5 &lt;- viewers_df %&gt;%
-  summarise(avg_viewership = mean(series_5, na.rm = TRUE))</code></pre>
+  summarise (avg_viewership = mean(series_5, na.rm = TRUE))</code></pre>
+</div>
+<div id="data-set-description-2" class="section level4">
+<h4>Data set description</h4>
+<p>The final data set includes information about the bakes, including
+the signature and showstopper bakes, of each baker in each series. Rows
+without relevant information (as represented with NA in the rows) were
+filtered out. The average viewership in season one was 2.77</p>
 </div>
 </div>
 

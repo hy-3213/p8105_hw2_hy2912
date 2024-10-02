@@ -107,6 +107,9 @@ gwynnda_df <- read_excel("/Users/helenyousaf/Desktop/p8105_hw2_hy2912/Trash_Data
 combined_data <- bind_rows(MrTrash_df, professor_trash_wheel, gwynnda_df)
 ```
 
+#### Data set description 
+This data set includes information for Mr. Trash Wheel  “a water-wheel vessel which removes trash from the Inner Harbor in Baltimore, Maryland. The data sheet includes several sheets, but for the purpose of this assignment, only the Mr. Trash Wheel, Professor Trash Wheel, and Gwynnda are utilized. The data was clean by using the janitorr:: clean_names() function to change the column names to lower snake case. In addition, the sports balls data was changed to an integer format. 
+
 ## Problem 3: The Great British Baking Show 
 #### Importing The Great British Baking Show data 
 ```{r}
@@ -155,6 +158,7 @@ anti_results_viewers<- anti_join(results_df, viewers_df, by = "episode")
 #### Merge datasets
 ```{r}
 final_dataset <- anti_join(bakes_df, bakers_df, results_df, by = "baker")
+print(final_dataset)
 ```
 
 #### Exporting final dataset
@@ -182,6 +186,23 @@ head(viewers_clean, 10)
 
 #### Calculating average viewership in Season 1 and Season 5
 ```{r}
+library(dplyr)
+library(tidyr)
+library(knitr)
+```
+
+# Create a summary table
+```{r}
+viewers_df = 
+  pivot_longer(
+    viewers_df, 
+    series_1:series_10,
+    names_to = "series", 
+    names_prefix = "series_",
+    values_to = "viewers")
+```
+
+```{r}
 avg_viewership_season_1 <- viewers_df %>%
   summarise(avg_viewership = mean(series_1, na.rm = TRUE))
 ```
@@ -191,3 +212,5 @@ avg_viewership_season_5 <- viewers_df %>%
   summarise(avg_viewership = mean(series_5, na.rm = TRUE))
 ```
 
+#### Data set description 
+The final data set includes information about the bakes, including the signature and showstopper bakes, of each baker in each series. Rows without relevant information (as represented with NA in the rows) were filtered out. The average viewership in season one was 2.77
