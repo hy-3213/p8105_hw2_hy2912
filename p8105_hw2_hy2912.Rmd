@@ -9,7 +9,7 @@ output: html_document
 library(tidyverse)
 ```
 
-## Problem 1 
+## Problem 1: NYC Transit 
 #### Importing NYC Transit Data 
 
 ```{r, include = FALSE}
@@ -17,17 +17,106 @@ getwd()
 ```
 
 ```{r}
-NYCTransit_df = read_csv(file = "/Users/helenyousaf/Desktop/p8105_hw2_hy2912/NYC_Transit_Subway_Entrance_And_Exit_Data.csv")
+NYCTransit_df = read_csv(file = "/Users/helenyousaf/Desktop/p8105_hw2_hy2912/NYC_Transit_Subway_Entrance_And_Exit_Data.csv", col_types = cols (Route8="c", Route9 = "c", Route10 = "c", Route11 = "c")) |>
+  janitor::clean_names()|>
+  select(line, station_name, station_latitude, station_longitude, route1:route11, entrance_type, exit_only, entry, vending, ada)|>
+  mutate(entry = ifelse(entry=="YES", TRUE, FALSE))
 ```
-```{r}
-names(NYCTransit_df)
-```
-```{r}
-NYCTransit_df = janitor::clean_names(NYCTransit_df)
-names(NYCTransit_df)
-```
+
 #### Looking at data
 ```{r}
 print(NYCTransit_df)
 ```
+#### Unique stations
+```{r}
+NYCTransit_df|>
+  select(station_name, line)|>
+  distinct()
+```
+#### Filtering by ADA compliance 
+```{r}
+NYCTransit_df|>
+  filter(ada==TRUE)|>
+  select(station_name, line)|>
+  distinct()
+```
+#### Proportion of station exntrances/exits wihtout vending 
+```{r}
+NYCTransit_df|>
+  filter(vending == "NO")|>
+  pull(entry)|>
+  mean()
+```
+#### Stations serving A train and are ADA compliant 
+```{r}
+NYCTransit_df|>
+  pivot_longer (
+    route1:route11,
+    names_to = "route_num",
+    values_to = "route")|>
+  filter (route == "A")|>
+  select (station_name, line)|>
+  distinct()
+```
+```{r}
+NYCTransit_df|>
+  pivot_longer (
+    route1:route11,
+    names_to = "route_num",
+    values_to = "route")|>
+  filter (route == "A", ada == TRUE)|>
+  select (station_name, line)|>
+  distinct()
+```
+
+#### Data Set Description 
+This data set presents information related to NYC Transit data. More specifically, this CSV file contains information related to entrance and exit for each subway station in New York City. After data cleaning, the following variables were retained: line, station name, station latitude, station longitude, routes taken (1-11), entrance type, entry, vending, and ADA compliance. Other variables in the original dataset that were not retained for the purpose of this HW. The raw data is organized in a 1868  x 32 table. The resulting dataset has dimensions of 1868 rows x 20 columns.  There are 465 unique stations. Of these, 84 are ADA compliant. 50% of station entrances/exists without vending allow entrance. The entry variable was also changed to a logical variable. The proportion of station entrances/exits without vending allowed is 0.377. This data is not tidy because the route number should be single variable in addition to the route. 17 stations serve the A train and are ADA compliant. This can be done by transforming the variable from wide to long
+
+## Problem 2: Mr.Trash Wheel 
+#### Importing Mr. Trash Wheel Data_Excel
+```{r}
+library(readxl)
+```
+```{r}
+MrTrash_df = read_excel("/Users/helenyousaf/Desktop/p8105_hw2_hy2912/TrashData.xlsx", n_max=20)
+```
+
+## Problem 3: The Great British Baking Show 
+#### Importing The Great British Baking Show data 
+```{r}
+Baking_viewers_df = read_csv(file = "/Users/helenyousaf/Desktop/p8105_hw2_hy2912/viewers.csv")
+```
+```{r}
+print(Baking_viewers_df)
+names(Baking_viewers_df)
+```
+
+```{r}
+Baking_bakers_df = read_csv(file = "/Users/helenyousaf/Desktop/p8105_hw2_hy2912/bakers.csv")
+```
+```{r}
+print (Baking_bakers_df)
+names(Baking_bakers_df)
+```
+
+```{r}
+Baking_bakes_df = read_csv(file = "/Users/helenyousaf/Desktop/p8105_hw2_hy2912/bakes.csv")
+```
+```{r}
+print(Baking_bakes_df)
+names(Baking_bakes_df)
+```
+
+```{r}
+Baking_results_df = read_csv(file = "/Users/helenyousaf/Desktop/p8105_hw2_hy2912/results.csv")
+```
+```{r}
+print(Baking_results_df)
+names(Baking_results_df)
+```
+
+```{r}
+anti_join (Baking_bakers_df, Baking_bakes_df)
+```
+
 
