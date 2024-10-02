@@ -7,6 +7,8 @@ output: html_document
 
 ```{r setup}
 library(tidyverse)
+library(knitr)
+library(tidyr)
 ```
 
 ## Problem 1: NYC Transit 
@@ -108,7 +110,7 @@ combined_data <- bind_rows(MrTrash_df, professor_trash_wheel, gwynnda_df)
 ```
 
 #### Data set description 
-This data set includes information for Mr. Trash Wheel  “a water-wheel vessel which removes trash from the Inner Harbor in Baltimore, Maryland. The data sheet includes several sheets, but for the purpose of this assignment, only the Mr. Trash Wheel, Professor Trash Wheel, and Gwynnda are utilized. The data was clean by using the janitorr:: clean_names() function to change the column names to lower snake case. In addition, the sports balls data was changed to an integer format. 
+This data set includes information for Mr. Trash Wheel  “a water-wheel vessel which removes trash from the Inner Harbor in Baltimore, Maryland. The data sheet includes several sheets, but for the purpose of this assignment, only the Mr. Trash Wheel, Professor Trash Wheel, and Gwynnda are utilized. The data was clean by using the janitorr:: clean_names() function to change the column names to lower snake case. In addition, the sports balls data was changed to an integer format. The Mr. Trash Wheel Data has 653 rows of which 121 describe Professor Trash Wheel Data. The important variables included weight, given in tons, and volume (in cubic yards). Other variables include information about trash collected like Polystyrene, Cigarette Butts,Glass Bottles, Plastic Bags, Plastic Bottles, and Sports Balls. 
 
 ## Problem 3: The Great British Baking Show 
 #### Importing The Great British Baking Show data 
@@ -202,15 +204,23 @@ viewers_df =
     values_to = "viewers")
 ```
 
-```{r}
 avg_viewership_season_1 <- viewers_df %>%
-  summarise(avg_viewership = mean(series_1, na.rm = TRUE))
-```
+  summarise(avg_viewership = mean(series1, na.rm = TRUE))
 
-```{r}
+
 avg_viewership_season_5 <- viewers_df %>%
   summarise(avg_viewership = mean(series_5, na.rm = TRUE))
-```
+
+# Create a summary table
+summary_table <- data %>%
+  group_by(Season, Episode) %>%
+  summarise(Winner = first(Winner)) %>%
+  ungroup()
+
+# Display the table
+
+knitr: kable(summary_table, caption = "Star Baker or Winner of Each Episode (Seasons 5-10)")
+
 
 #### Data set description 
-The final data set includes information about the bakes, including the signature and showstopper bakes, of each baker in each series. Rows without relevant information (as represented with NA in the rows) were filtered out. The average viewership in season one was 2.77
+The final data set includes information about the bakes, including the signature and showstopper bakes, of each baker in each series. Rows without relevant information (as represented with NA in the rows) were filtered out. The average viewership in season one was 2.77. The average viewership in season five was 10.04.

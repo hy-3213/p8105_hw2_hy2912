@@ -368,6 +368,8 @@ display: none;
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()
 ## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre class="r"><code>library(knitr)
+library(tidyr)</code></pre>
 <div id="problem-1-nyc-transit" class="section level2">
 <h2>Problem 1: NYC Transit</h2>
 <div id="importing-nyc-transit-data" class="section level4">
@@ -583,7 +585,12 @@ The data sheet includes several sheets, but for the purpose of this
 assignment, only the Mr. Trash Wheel, Professor Trash Wheel, and Gwynnda
 are utilized. The data was clean by using the janitorr:: clean_names()
 function to change the column names to lower snake case. In addition,
-the sports balls data was changed to an integer format.</p>
+the sports balls data was changed to an integer format. The Mr. Trash
+Wheel Data has 653 rows of which 121 describe Professor Trash Wheel
+Data. The important variables included weight, given in tons, and volume
+(in cubic yards). Other variables include information about trash
+collected like Polystyrene, Cigarette Butts,Glass Bottles, Plastic Bags,
+Plastic Bottles, and Sports Balls.</p>
 </div>
 </div>
 <div id="problem-3-the-great-british-baking-show" class="section level2">
@@ -713,17 +720,41 @@ janitor::clean_names()</code></pre>
 </div>
 <div id="calculating-average-viewership-in-season-1-and-season-5" class="section level4">
 <h4>Calculating average viewership in Season 1 and Season 5</h4>
-<pre class="r"><code>avg_viewership_season_1 &lt;- viewers_df %&gt;%
-  summarise(avg_viewership = mean(series_1, na.rm = TRUE))</code></pre>
-<pre class="r"><code>avg_viewership_season_5 &lt;- viewers_df %&gt;%
-  summarise (avg_viewership = mean(series_5, na.rm = TRUE))</code></pre>
+<pre class="r"><code>library(dplyr)
+library(tidyr)
+library(knitr)</code></pre>
 </div>
+</div>
+<div id="create-a-summary-table" class="section level1">
+<h1>Create a summary table</h1>
+<pre class="r"><code>viewers_df = 
+  pivot_longer(
+    viewers_df, 
+    series_1:series_10,
+    names_to = &quot;series&quot;, 
+    names_prefix = &quot;series_&quot;,
+    values_to = &quot;viewers&quot;)</code></pre>
+<p>avg_viewership_season_1 &lt;- viewers_df %&gt;%
+summarise(avg_viewership = mean(series1, na.rm = TRUE))</p>
+<p>avg_viewership_season_5 &lt;- viewers_df %&gt;%
+summarise(avg_viewership = mean(series_5, na.rm = TRUE))</p>
+</div>
+<div id="create-a-summary-table-1" class="section level1">
+<h1>Create a summary table</h1>
+<p>summary_table &lt;- data %&gt;% group_by(Season, Episode) %&gt;%
+summarise(Winner = first(Winner)) %&gt;% ungroup()</p>
+</div>
+<div id="display-the-table" class="section level1">
+<h1>Display the table</h1>
+<p>knitr: kable(summary_table, caption = “Star Baker or Winner of Each
+Episode (Seasons 5-10)”)</p>
 <div id="data-set-description-2" class="section level4">
 <h4>Data set description</h4>
 <p>The final data set includes information about the bakes, including
 the signature and showstopper bakes, of each baker in each series. Rows
 without relevant information (as represented with NA in the rows) were
-filtered out. The average viewership in season one was 2.77</p>
+filtered out. The average viewership in season one was 2.77. The average
+viewership in season five was 10.04.</p>
 </div>
 </div>
 
