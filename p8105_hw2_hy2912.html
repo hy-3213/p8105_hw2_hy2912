@@ -439,16 +439,16 @@ display: none;
 ## 10 Roosevelt Island               63rd Street    
 ## # ℹ 74 more rows</code></pre>
 </div>
-<div id="proportion-of-station-exntrancesexits-wihtout-vending" class="section level4">
-<h4>Proportion of station exntrances/exits wihtout vending</h4>
+<div id="station-exntrancesexits-wihtout-vending" class="section level4">
+<h4>Station exntrances/exits wihtout vending</h4>
 <pre class="r"><code>NYCTransit_df|&gt;
   filter(vending == &quot;NO&quot;)|&gt;
   pull(entry)|&gt;
   mean()</code></pre>
 <pre><code>## [1] 0.3770492</code></pre>
 </div>
-<div id="stations-serving-a-train-and-are-ada-compliant" class="section level4">
-<h4>Stations serving A train and are ADA compliant</h4>
+<div id="a-train-stations-and-ada-compliant" class="section level4">
+<h4>A train stations and ADA compliant</h4>
 <pre class="r"><code>NYCTransit_df|&gt;
   pivot_longer (
     route1:route11,
@@ -507,34 +507,80 @@ specifically, this CSV file contains information related to entrance and
 exit for each subway station in New York City. After data cleaning, the
 following variables were retained: line, station name, station latitude,
 station longitude, routes taken (1-11), entrance type, entry, vending,
-and ADA compliance. Other variables in the original dataset that were
+and ADA compliance. Other variables in the original data set that were
 not retained for the purpose of this HW. The raw data is organized in a
-1868 x 32 table. The resulting dataset has dimensions of 1868 rows x 20
+1868 x 32 table. The resulting data set has dimensions of 1868 rows x 20
 columns. There are 465 unique stations. Of these, 84 are ADA compliant.
-50% of station entrances/exists without vending allow entrance. The
-entry variable was also changed to a logical variable. The proportion of
-station entrances/exits without vending allowed is 0.377. This data is
-not tidy because the route number should be single variable in addition
-to the route. 17 stations serve the A train and are ADA compliant. This
-can be done by transforming the variable from wide to long</p>
+The entry variable was also changed to a logical variable. The
+proportion of station entrances/exits without vending allowed is 0.377.
+17 stations serve the A train and are ADA compliant. This data is not
+tidy because the route number should be single variable in addition to
+the route. This can be done by transforming the variable from wide to
+long.</p>
 </div>
 </div>
 <div id="problem-2-mr.trash-wheel" class="section level2">
 <h2>Problem 2: Mr.Trash Wheel</h2>
-<div id="importing-mr.-trash-wheel-data_excel" class="section level4">
-<h4>Importing Mr. Trash Wheel Data_Excel</h4>
-<pre class="r"><code>library(readxl)</code></pre>
-<pre class="r"><code>MrTrash_df = read_excel(&quot;/Users/helenyousaf/Desktop/p8105_hw2_hy2912/TrashData.xlsx&quot;, n_max=20)</code></pre>
+<div id="importing-mr.-trash-wheel-data_excel-and-data-cleaning" class="section level4">
+<h4>Importing Mr. Trash Wheel Data_Excel and data cleaning</h4>
+<pre class="r"><code>library(readxl)
+MrTrash_df = read_excel(&quot;/Users/helenyousaf/Desktop/p8105_hw2_hy2912/Trash_Data_New.xlsx&quot;, sheet = &quot;Mr. Trash Wheel&quot;, skip = 1, col_names = TRUE) </code></pre>
 <pre><code>## New names:
 ## • `` -&gt; `...15`
 ## • `` -&gt; `...16`</code></pre>
+<pre class="r"><code>MrTrash_df = janitor::clean_names(MrTrash_df) </code></pre>
+<pre class="r"><code>names(MrTrash_df)</code></pre>
+<pre><code>##  [1] &quot;dumpster&quot;           &quot;month&quot;              &quot;year&quot;              
+##  [4] &quot;date&quot;               &quot;weight_tons&quot;        &quot;volume_cubic_yards&quot;
+##  [7] &quot;plastic_bottles&quot;    &quot;polystyrene&quot;        &quot;cigarette_butts&quot;   
+## [10] &quot;glass_bottles&quot;      &quot;plastic_bags&quot;       &quot;wrappers&quot;          
+## [13] &quot;sports_balls&quot;       &quot;homes_powered&quot;      &quot;x15&quot;               
+## [16] &quot;x16&quot;</code></pre>
+<pre class="r"><code>mutate(MrTrash_df, sports_balls = as.integer(round(sports_balls)))</code></pre>
+<pre><code>## # A tibble: 653 × 16
+##    dumpster month year  date                weight_tons volume_cubic_yards
+##       &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;dttm&gt;                    &lt;dbl&gt;              &lt;dbl&gt;
+##  1        1 May   2014  2014-05-16 00:00:00        4.31                 18
+##  2        2 May   2014  2014-05-16 00:00:00        2.74                 13
+##  3        3 May   2014  2014-05-16 00:00:00        3.45                 15
+##  4        4 May   2014  2014-05-17 00:00:00        3.1                  15
+##  5        5 May   2014  2014-05-17 00:00:00        4.06                 18
+##  6        6 May   2014  2014-05-20 00:00:00        2.71                 13
+##  7        7 May   2014  2014-05-21 00:00:00        1.91                  8
+##  8        8 May   2014  2014-05-28 00:00:00        3.7                  16
+##  9        9 June  2014  2014-06-05 00:00:00        2.52                 14
+## 10       10 June  2014  2014-06-11 00:00:00        3.76                 18
+## # ℹ 643 more rows
+## # ℹ 10 more variables: plastic_bottles &lt;dbl&gt;, polystyrene &lt;dbl&gt;,
+## #   cigarette_butts &lt;dbl&gt;, glass_bottles &lt;dbl&gt;, plastic_bags &lt;dbl&gt;,
+## #   wrappers &lt;dbl&gt;, sports_balls &lt;int&gt;, homes_powered &lt;dbl&gt;, x15 &lt;lgl&gt;,
+## #   x16 &lt;lgl&gt;</code></pre>
+</div>
+<div id="add-identifier-for-mr.-trash-wheel" class="section level4">
+<h4>Add identifier for Mr. Trash Wheel</h4>
+<pre class="r"><code>MrTrash_df &lt;- MrTrash_df %&gt;%
+  mutate(MrTrash_df = &quot;Mr. Trash Wheel&quot;)</code></pre>
+</div>
+<div id="read-and-clean-professor-trash-wheel-data" class="section level4">
+<h4>Read and clean Professor Trash Wheel data</h4>
+<pre class="r"><code>professor_trash_wheel &lt;- read_excel(&quot;/Users/helenyousaf/Desktop/p8105_hw2_hy2912/Trash_Data_New.xlsx&quot;, sheet = &quot;Professor Trash Wheel&quot;, skip = 1, col_names = TRUE) %&gt;%
+select(-contains(&quot;notes&quot;)) </code></pre>
+</div>
+<div id="read-and-clean-gwynnda-data" class="section level4">
+<h4>Read and clean Gwynnda data</h4>
+<pre class="r"><code>gwynnda_df &lt;- read_excel(&quot;/Users/helenyousaf/Desktop/p8105_hw2_hy2912/Trash_Data_New.xlsx&quot;, sheet = &quot;Gwynnda Trash Wheel&quot;, skip = 1, col_names = TRUE) %&gt;%
+  select(-contains(&quot;notes&quot;)) </code></pre>
+</div>
+<div id="combine-datasets" class="section level4">
+<h4>Combine datasets</h4>
+<pre class="r"><code>combined_data &lt;- bind_rows(MrTrash_df, professor_trash_wheel, gwynnda_df)</code></pre>
 </div>
 </div>
 <div id="problem-3-the-great-british-baking-show" class="section level2">
 <h2>Problem 3: The Great British Baking Show</h2>
 <div id="importing-the-great-british-baking-show-data" class="section level4">
 <h4>Importing The Great British Baking Show data</h4>
-<pre class="r"><code>Baking_viewers_df = read_csv(file = &quot;/Users/helenyousaf/Desktop/p8105_hw2_hy2912/viewers.csv&quot;)</code></pre>
+<pre class="r"><code>viewers_df = read_csv(file = &quot;/Users/helenyousaf/Desktop/p8105_hw2_hy2912/viewers.csv&quot;)</code></pre>
 <pre><code>## Rows: 10 Columns: 11
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
@@ -542,26 +588,11 @@ can be done by transforming the variable from wide to long</p>
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code>print(Baking_viewers_df)</code></pre>
-<pre><code>## # A tibble: 10 × 11
-##    Episode `Series 1` `Series 2` `Series 3` `Series 4` `Series 5` `Series 6`
-##      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-##  1       1       2.24       3.1        3.85       6.6        8.51       11.6
-##  2       2       3          3.53       4.6        6.65       8.79       11.6
-##  3       3       3          3.82       4.53       7.17       9.28       12.0
-##  4       4       2.6        3.6        4.71       6.82      10.2        12.4
-##  5       5       3.03       3.83       4.61       6.95       9.95       12.4
-##  6       6       2.75       4.25       4.82       7.32      10.1        12  
-##  7       7      NA          4.42       5.1        7.76      10.3        12.4
-##  8       8      NA          5.06       5.35       7.41       9.02       11.1
-##  9       9      NA         NA          5.7        7.41      10.7        12.6
-## 10      10      NA         NA          6.74       9.45      13.5        15.0
-## # ℹ 4 more variables: `Series 7` &lt;dbl&gt;, `Series 8` &lt;dbl&gt;, `Series 9` &lt;dbl&gt;,
-## #   `Series 10` &lt;dbl&gt;</code></pre>
-<pre class="r"><code>names(Baking_viewers_df)</code></pre>
-<pre><code>##  [1] &quot;Episode&quot;   &quot;Series 1&quot;  &quot;Series 2&quot;  &quot;Series 3&quot;  &quot;Series 4&quot;  &quot;Series 5&quot; 
-##  [7] &quot;Series 6&quot;  &quot;Series 7&quot;  &quot;Series 8&quot;  &quot;Series 9&quot;  &quot;Series 10&quot;</code></pre>
-<pre class="r"><code>Baking_bakers_df = read_csv(file = &quot;/Users/helenyousaf/Desktop/p8105_hw2_hy2912/bakers.csv&quot;)</code></pre>
+<pre class="r"><code>viewers_df = janitor::clean_names(viewers_df)
+names(viewers_df)</code></pre>
+<pre><code>##  [1] &quot;episode&quot;   &quot;series_1&quot;  &quot;series_2&quot;  &quot;series_3&quot;  &quot;series_4&quot;  &quot;series_5&quot; 
+##  [7] &quot;series_6&quot;  &quot;series_7&quot;  &quot;series_8&quot;  &quot;series_9&quot;  &quot;series_10&quot;</code></pre>
+<pre class="r"><code>bakers_df = read_csv(file = &quot;/Users/helenyousaf/Desktop/p8105_hw2_hy2912/bakers.csv&quot;)</code></pre>
 <pre><code>## Rows: 120 Columns: 5
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
@@ -570,25 +601,15 @@ can be done by transforming the variable from wide to long</p>
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code>print (Baking_bakers_df)</code></pre>
-<pre><code>## # A tibble: 120 × 5
-##    `Baker Name`     Series `Baker Age` `Baker Occupation`           Hometown    
-##    &lt;chr&gt;             &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt;                        &lt;chr&gt;       
-##  1 Ali Imdad             4          25 Charity worker               Saltley, Bi…
-##  2 Alice Fevronia       10          28 Geography teacher            Essex       
-##  3 Alvin Magallanes      6          37 Nurse                        Bracknell, …
-##  4 Amelia LeBruin       10          24 Fashion designer             Halifax     
-##  5 Andrew Smyth          7          25 Aerospace engineer           Derby / Hol…
-##  6 Annetha Mills         1          30 Midwife                      Essex       
-##  7 Antony Amourdoux      9          30 Banker                       London      
-##  8 Beca Lyne-Pirkis      4          31 Military Wives&#39; Choir Singer Aldershot, …
-##  9 Ben Frazer            2          31 Graphic Designer             Northampton 
-## 10 Benjamina Ebuehi      7          23 Teaching assistant           South London
-## # ℹ 110 more rows</code></pre>
-<pre class="r"><code>names(Baking_bakers_df)</code></pre>
-<pre><code>## [1] &quot;Baker Name&quot;       &quot;Series&quot;           &quot;Baker Age&quot;        &quot;Baker Occupation&quot;
-## [5] &quot;Hometown&quot;</code></pre>
-<pre class="r"><code>Baking_bakes_df = read_csv(file = &quot;/Users/helenyousaf/Desktop/p8105_hw2_hy2912/bakes.csv&quot;)</code></pre>
+<pre class="r"><code>bakers_df = janitor::clean_names(bakers_df)
+names(bakers_df)</code></pre>
+<pre><code>## [1] &quot;baker_name&quot;       &quot;series&quot;           &quot;baker_age&quot;        &quot;baker_occupation&quot;
+## [5] &quot;hometown&quot;</code></pre>
+<pre class="r"><code>bakers_df = rename(bakers_df, baker = baker_name)
+names(bakers_df)</code></pre>
+<pre><code>## [1] &quot;baker&quot;            &quot;series&quot;           &quot;baker_age&quot;        &quot;baker_occupation&quot;
+## [5] &quot;hometown&quot;</code></pre>
+<pre class="r"><code>bakes_df = read_csv(file = &quot;/Users/helenyousaf/Desktop/p8105_hw2_hy2912/bakes.csv&quot;)</code></pre>
 <pre><code>## Rows: 548 Columns: 5
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
@@ -597,75 +618,80 @@ can be done by transforming the variable from wide to long</p>
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code>print(Baking_bakes_df)</code></pre>
-<pre><code>## # A tibble: 548 × 5
-##    Series Episode Baker     `Signature Bake`                      `Show Stopper`
-##     &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;                                 &lt;chr&gt;         
-##  1      1       1 Annetha   &quot;Light Jamaican Black Cakewith Straw… Red, White &amp; …
-##  2      1       1 David     &quot;Chocolate Orange Cake&quot;               Black Forest …
-##  3      1       1 Edd       &quot;Caramel Cinnamon and Banana Cake&quot;    N/A           
-##  4      1       1 Jasminder &quot;Fresh Mango and Passion Fruit Hummi… N/A           
-##  5      1       1 Jonathan  &quot;Carrot Cake with Lime and Cream Che… Three Tiered …
-##  6      1       1 Lea       &quot;Cranberry and Pistachio Cakewith Or… Raspberries a…
-##  7      1       1 Louise    &quot;Carrot and Orange Cake&quot;              Never Fail Ch…
-##  8      1       1 Mark      &quot;Sticky Marmalade Tea Loaf&quot;           Heart-shaped …
-##  9      1       1 Miranda   &quot;Triple Layered Brownie Meringue Cak… Three Tiered …
-## 10      1       1 Ruth      &quot;Three Tiered Lemon Drizzle Cakewith… Classic Choco…
-## # ℹ 538 more rows</code></pre>
-<pre class="r"><code>names(Baking_bakes_df)</code></pre>
-<pre><code>## [1] &quot;Series&quot;         &quot;Episode&quot;        &quot;Baker&quot;          &quot;Signature Bake&quot;
-## [5] &quot;Show Stopper&quot;</code></pre>
-<pre class="r"><code>Baking_results_df = read_csv(file = &quot;/Users/helenyousaf/Desktop/p8105_hw2_hy2912/results.csv&quot;)</code></pre>
-<pre><code>## New names:
-## Rows: 1138 Columns: 5
-## ── Column specification
-## ──────────────────────────────────────────────────────── Delimiter: &quot;,&quot; chr
-## (5): ...1, ...2, ...3, ...4, IN = stayed in; OUT = Eliminated; STAR BAKE...
-## ℹ Use `spec()` to retrieve the full column specification for this data. ℹ
-## Specify the column types or set `show_col_types = FALSE` to quiet this message.
-## • `` -&gt; `...1`
-## • `` -&gt; `...2`
-## • `` -&gt; `...3`
-## • `` -&gt; `...4`</code></pre>
-<pre class="r"><code>print(Baking_results_df)</code></pre>
-<pre><code>## # A tibble: 1,138 × 5
-##    ...1   ...2    ...3      ...4      IN = stayed in; OUT = Eliminated; STAR B…¹
-##    &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;                                     
-##  1 &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;      &lt;NA&gt;      &lt;NA&gt;                                      
-##  2 series episode baker     technical result                                    
-##  3 1      1       Annetha   2         IN                                        
-##  4 1      1       David     3         IN                                        
-##  5 1      1       Edd       1         IN                                        
-##  6 1      1       Jasminder &lt;NA&gt;      IN                                        
-##  7 1      1       Jonathan  9         IN                                        
-##  8 1      1       Louise    &lt;NA&gt;      IN                                        
-##  9 1      1       Miranda   8         IN                                        
-## 10 1      1       Ruth      &lt;NA&gt;      IN                                        
-## # ℹ 1,128 more rows
-## # ℹ abbreviated name:
-## #   ¹​`IN = stayed in; OUT = Eliminated; STAR BAKER = Star Baker; WINNER = Series Winner; Runner-up = Series Runner up; WD = withdrew`</code></pre>
-<pre class="r"><code>names(Baking_results_df)</code></pre>
-<pre><code>## [1] &quot;...1&quot;                                                                                                                          
-## [2] &quot;...2&quot;                                                                                                                          
-## [3] &quot;...3&quot;                                                                                                                          
-## [4] &quot;...4&quot;                                                                                                                          
-## [5] &quot;IN = stayed in; OUT = Eliminated; STAR BAKER = Star Baker; WINNER = Series Winner; Runner-up = Series Runner up; WD = withdrew&quot;</code></pre>
-<pre class="r"><code>anti_join (Baking_bakers_df, Baking_bakes_df)</code></pre>
-<pre><code>## Joining with `by = join_by(Series)`</code></pre>
-<pre><code>## # A tibble: 25 × 5
-##    `Baker Name`        Series `Baker Age` `Baker Occupation`            Hometown
-##    &lt;chr&gt;                &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt;                         &lt;chr&gt;   
-##  1 Alice Fevronia          10          28 Geography teacher             Essex   
-##  2 Amelia LeBruin          10          24 Fashion designer              Halifax 
-##  3 Antony Amourdoux         9          30 Banker                        London  
-##  4 Briony Williams          9          33 Full-time parent              Bristol 
-##  5 Dan Beasley-Harling      9          36 Full-time parent              London  
-##  6 Dan Chambers            10          32 Support worker                Rotherh…
-##  7 David Atherton          10          36 International health adviser  Whitby  
-##  8 Helena Garcia           10          40 Online project manager        Leeds   
-##  9 Henry Bird              10          20 Student                       Durham  
-## 10 Imelda McCarron          9          33 Countryside recreation offic… County …
-## # ℹ 15 more rows</code></pre>
+<pre class="r"><code>bakes_df = janitor::clean_names(bakes_df)
+names(bakes_df)</code></pre>
+<pre><code>## [1] &quot;series&quot;         &quot;episode&quot;        &quot;baker&quot;          &quot;signature_bake&quot;
+## [5] &quot;show_stopper&quot;</code></pre>
+<pre class="r"><code>results_df = read_csv(file = &quot;/Users/helenyousaf/Desktop/p8105_hw2_hy2912/results.csv&quot; , skip = 2, col_names = TRUE)</code></pre>
+<pre><code>## Rows: 1136 Columns: 5
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (2): baker, result
+## dbl (3): series, episode, technical
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>results_df = janitor::clean_names(results_df)
+names(results_df)</code></pre>
+<pre><code>## [1] &quot;series&quot;    &quot;episode&quot;   &quot;baker&quot;     &quot;technical&quot; &quot;result&quot;</code></pre>
+</div>
+<div id="clean-and-tidy-bakers-dataset" class="section level4">
+<h4>Clean and tidy bakers dataset</h4>
+<pre class="r"><code>bakers_df &lt;- bakers_df %&gt;%
+  filter(!is.na(baker))</code></pre>
+</div>
+<div id="clean-and-tidy-bakes-dataset" class="section level4">
+<h4>Clean and tidy bakes dataset</h4>
+<pre class="r"><code>bakes_df &lt;- bakes_df %&gt;%
+  filter(!is.na(episode))</code></pre>
+</div>
+<div id="check-for-completeness" class="section level4">
+<h4>Check for completeness</h4>
+<pre class="r"><code>anti_bakers_bakes &lt;- anti_join(bakers_df, bakes_df, by = &quot;baker&quot;)
+anti_bakes_results &lt;- anti_join(bakes_df, results_df, by = &quot;episode&quot;)
+anti_results_viewers&lt;- anti_join(results_df, viewers_df, by = &quot;episode&quot;)</code></pre>
+</div>
+<div id="merge-datasets" class="section level4">
+<h4>Merge datasets</h4>
+<pre class="r"><code>final_dataset &lt;- anti_join(bakes_df, bakers_df, results_df, by = &quot;baker&quot;)</code></pre>
+</div>
+<div id="exporting-final-dataset" class="section level4">
+<h4>Exporting final dataset</h4>
+<pre class="r"><code>write_csv(final_dataset, &quot;final_dataset.csv&quot;)</code></pre>
+</div>
+<div id="creating-a-table-for-star-bakers-in-seasons-5-through-10" class="section level4">
+<h4>Creating a table for star bakers in Seasons 5 through 10</h4>
+<pre class="r"><code>star_bakers_table &lt;- results_df %&gt;%
+  filter(series == 5, series == 6, series == 7, series == 8, series == 9, series == 10) %&gt;%
+  select(series, episode, baker) %&gt;%
+  distinct() </code></pre>
+</div>
+<div id="showing-the-first-10-rows-of-viewers-dataset" class="section level4">
+<h4>Showing the first 10 rows of viewers dataset</h4>
+<pre class="r"><code>viewers_clean &lt;- viewers_df %&gt;%
+janitor::clean_names()</code></pre>
+<pre class="r"><code>head(viewers_clean, 10)</code></pre>
+<pre><code>## # A tibble: 10 × 11
+##    episode series_1 series_2 series_3 series_4 series_5 series_6 series_7
+##      &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+##  1       1     2.24     3.1      3.85     6.6      8.51     11.6     13.6
+##  2       2     3        3.53     4.6      6.65     8.79     11.6     13.4
+##  3       3     3        3.82     4.53     7.17     9.28     12.0     13.0
+##  4       4     2.6      3.6      4.71     6.82    10.2      12.4     13.3
+##  5       5     3.03     3.83     4.61     6.95     9.95     12.4     13.1
+##  6       6     2.75     4.25     4.82     7.32    10.1      12       13.1
+##  7       7    NA        4.42     5.1      7.76    10.3      12.4     13.4
+##  8       8    NA        5.06     5.35     7.41     9.02     11.1     13.3
+##  9       9    NA       NA        5.7      7.41    10.7      12.6     13.4
+## 10      10    NA       NA        6.74     9.45    13.5      15.0     15.9
+## # ℹ 3 more variables: series_8 &lt;dbl&gt;, series_9 &lt;dbl&gt;, series_10 &lt;dbl&gt;</code></pre>
+</div>
+<div id="calculating-average-viewership-in-season-1-and-season-5" class="section level4">
+<h4>Calculating average viewership in Season 1 and Season 5</h4>
+<pre class="r"><code>avg_viewership_season_1 &lt;- viewers_df %&gt;%
+  summarise(avg_viewership = mean(series_1, na.rm = TRUE))</code></pre>
+<pre class="r"><code>avg_viewership_season_5 &lt;- viewers_df %&gt;%
+  summarise(avg_viewership = mean(series_5, na.rm = TRUE))</code></pre>
 </div>
 </div>
 

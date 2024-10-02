@@ -70,7 +70,7 @@ NYCTransit_df|>
 ```
 
 #### Data Set Description 
-This data set presents information related to NYC Transit data. More specifically, this CSV file contains information related to entrance and exit for each subway station in New York City. After data cleaning, the following variables were retained: line, station name, station latitude, station longitude, routes taken (1-11), entrance type, entry, vending, and ADA compliance. Other variables in the original data set that were not retained for the purpose of this HW. The raw data is organized in a 1868  x 32 table. The resulting data set has dimensions of 1868 rows x 20 columns.  There are 465 unique stations. Of these, 84 are ADA compliant. 50% of station entrances/exists without vending allow entrance. The entry variable was also changed to a logical variable. The proportion of station entrances/exits without vending allowed is 0.377. 17 stations serve the A train and are ADA compliant. This data is not tidy because the route number should be single variable in addition to the route. This can be done by transforming the variable from wide to long. 
+This data set presents information related to NYC Transit data. More specifically, this CSV file contains information related to entrance and exit for each subway station in New York City. After data cleaning, the following variables were retained: line, station name, station latitude, station longitude, routes taken (1-11), entrance type, entry, vending, and ADA compliance. Other variables in the original data set that were not retained for the purpose of this HW. The raw data is organized in a 1868  x 32 table. The resulting data set has dimensions of 1868 rows x 20 columns.  There are 465 unique stations. Of these, 84 are ADA compliant. The entry variable was also changed to a logical variable. The proportion of station entrances/exits without vending allowed is 0.377. 17 stations serve the A train and are ADA compliant. This data is not tidy because the route number should be single variable in addition to the route. This can be done by transforming the variable from wide to long. 
 
 ## Problem 2: Mr.Trash Wheel 
 #### Importing Mr. Trash Wheel Data_Excel and data cleaning
@@ -93,12 +93,12 @@ MrTrash_df <- MrTrash_df %>%
 
 #### Read and clean Professor Trash Wheel data
 ```{r}
-professor_trash_wheel <- read_excel("/Users/helenyousaf/Desktop/p8105_hw2_hy2912/Trash_Data_New.xlsx", sheet = "Professor Trash Wheel", skip = 2, col_names = TRUE) %>%
+professor_trash_wheel <- read_excel("/Users/helenyousaf/Desktop/p8105_hw2_hy2912/Trash_Data_New.xlsx", sheet = "Professor Trash Wheel", skip = 1, col_names = TRUE) %>%
 select(-contains("notes")) 
 ```
 #### Read and clean Gwynnda data
 ```{r}
-gwynnda_df <- read_excel("/Users/helenyousaf/Desktop/p8105_hw2_hy2912/Trash_Data_New.xlsx", sheet = "Gwynnda Trash Wheel", skip = 2, col_names = TRUE) %>%
+gwynnda_df <- read_excel("/Users/helenyousaf/Desktop/p8105_hw2_hy2912/Trash_Data_New.xlsx", sheet = "Gwynnda Trash Wheel", skip = 1, col_names = TRUE) %>%
   select(-contains("notes")) 
 ```
 
@@ -107,14 +107,6 @@ gwynnda_df <- read_excel("/Users/helenyousaf/Desktop/p8105_hw2_hy2912/Trash_Data
 combined_data <- bind_rows(MrTrash_df, professor_trash_wheel, gwynnda_df)
 ```
 
-#### Summary of the combined dataset
-```{r}
-num_observations <- nrow(combined_data)
-total_weight_professor <- sum(professor_trash_wheel$Weight, na.rm = TRUE)
-total_cigarette_butts_gwynnda_june_2022 <- gwynnda_df %>%
-  filter(month == "June", year == 2022) %>%
-  summarise(Total_Cigarette_Butts = sum(Cigarette_Butts, na.rm = TRUE))
-```
 ## Problem 3: The Great British Baking Show 
 #### Importing The Great British Baking Show data 
 ```{r}
@@ -122,6 +114,7 @@ viewers_df = read_csv(file = "/Users/helenyousaf/Desktop/p8105_hw2_hy2912/viewer
 viewers_df = janitor::clean_names(viewers_df)
 names(viewers_df)
 ```
+
 ```{r}
 bakers_df = read_csv(file = "/Users/helenyousaf/Desktop/p8105_hw2_hy2912/bakers.csv")
 bakers_df = janitor::clean_names(bakers_df)
@@ -156,15 +149,14 @@ bakes_df <- bakes_df %>%
 ```{r}
 anti_bakers_bakes <- anti_join(bakers_df, bakes_df, by = "baker")
 anti_bakes_results <- anti_join(bakes_df, results_df, by = "episode")
+anti_results_viewers<- anti_join(results_df, viewers_df, by = "episode")
 ```
 
 #### Merge datasets
 ```{r}
-final_dataset <- results_df |>
-  left_join(bakes_df, by = "episode") %>%
-  left_join(bakers_df, by = "baker") %>%
-  arrange (season, episode)
+final_dataset <- anti_join(bakes_df, bakers_df, results_df, by = "baker")
 ```
+
 #### Exporting final dataset
 ```{r}
 write_csv(final_dataset, "final_dataset.csv")
@@ -172,11 +164,10 @@ write_csv(final_dataset, "final_dataset.csv")
 
 #### Creating a table for star bakers in Seasons 5 through 10
 ```{r}
-star_bakers_table <- final_dataset %>%
-  filter(season >= 5 & season <= 10) %>%
-  select(season, episode, star_baker) %>%
-  distinct() %>%
-  arrange(season, episode)
+star_bakers_table <- results_df %>%
+  filter(series == 5, series == 6, series == 7, series == 8, series == 9, series == 10) %>%
+  select(series, episode, baker) %>%
+  distinct() 
 ```
 
 #### Showing the first 10 rows of viewers dataset
@@ -186,19 +177,17 @@ janitor::clean_names()
 ```
 
 ```{r}
-head(viewers_df_clean, 10)
+head(viewers_clean, 10)
 ```
 
 #### Calculating average viewership in Season 1 and Season 5
 ```{r}
-avg_viewership_season_1 <- viewers_df_clean %>%
-  filter(season == 1) %>%
-  summarise(avg_viewership = mean(viewership, na.rm = TRUE))
+avg_viewership_season_1 <- viewers_df %>%
+  summarise(avg_viewership = mean(series_1, na.rm = TRUE))
 ```
 
 ```{r}
-avg_viewership_season_5 <- viewers_df_clean %>%
-  filter(season == 5) %>%
-  summarise(avg_viewership = mean(viewership, na.rm = TRUE))
+avg_viewership_season_5 <- viewers_df %>%
+  summarise(avg_viewership = mean(series_5, na.rm = TRUE))
 ```
 
